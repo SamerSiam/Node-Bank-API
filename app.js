@@ -32,13 +32,13 @@ app.post("/users", (req, res) => {
 
   const result = usersUtil.addUser(id, name, cash, credit);
   if (result) {
-    res.status(201).send(`user added successfully`);
+    res.status(201).send(`User added successfully`);
   } else {
     res.status(400).send(`User Already Exists!`);
   }
 });
 
-/******************************account deposit (credit &cash)******
+/******************************Account deposit (credit &cash)******
  */
 app.put("/account/deposit/:type/:id/", (req, res) => {
   let result = false;
@@ -74,6 +74,24 @@ app.put("/account/withdraw/:type/:id/", (req, res) => {
     res.status(201).send(`funds withdrawn successfully`);
   } else {
     res.status(400).send(`Error withdrawing funds!`);
+  }
+});
+/***************************Account Transfer (credit & cash) */
+app.put("/account/transfer/:type/:fromId/:toId", (req, res) => {
+  let result = false;
+  const { type, fromId, toId } = req.params;
+  const { cash, credit } = req.body;
+
+  if (type === "credit") {
+    result = usersUtil.transferCredit(fromId, toId, credit);
+  } else if (type === "cash") {
+    result = usersUtil.transferCash(fromId, toId, cash);
+  }
+
+  if (result) {
+    res.status(201).send(`funds transfered successfully`);
+  } else {
+    res.status(400).send(`Error transferring funds!`);
   }
 });
 
