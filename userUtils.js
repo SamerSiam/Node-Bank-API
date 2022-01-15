@@ -22,8 +22,8 @@ const addUser = (id, name, cash, credit) => {
     users.push({
       id,
       name,
-      cash,
-      credit,
+      cash: cash || 0,
+      credit: credit || 0,
     });
     saveUsers(users);
     success = true;
