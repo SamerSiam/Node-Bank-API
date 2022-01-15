@@ -1,4 +1,4 @@
-# bank-api-nodejs
+# Node-Bank-API
 
 ## User Object
 
