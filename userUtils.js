@@ -1,7 +1,6 @@
 const fs = require("fs");
 
 /****************************Get User******
- * returns boolean if user exists or not
  */
 const getUser = (id) => {
   const users = loadUsers();
@@ -17,6 +16,7 @@ const addUser = (id, name, cash, credit) => {
   let users = loadUsers();
 
   if (getUser(id)) {
+    // user already exists
     success = false;
   } else {
     users.push({
@@ -38,9 +38,6 @@ const saveUsers = function (users) {
 const loadUsers = function () {
   try {
     const dataBuffer = fs.readFileSync("users.json");
-    // this will reduce another step of string parsing
-    //const dataBuffer = fs.readFileSync("users.json",'utf-8');
-
     const dataJson = dataBuffer.toString();
     return JSON.parse(dataJson);
   } catch (e) {
@@ -104,6 +101,44 @@ const withdrawCash = (id, cashAmount) => {
   }
   return success;
 };
+/*****************************Transfer Cash ************************/
+const transferCash = (fromId, toId, cashAmount) => {
+  let success = false;
+  let users = loadUsers();
+  let transferFrom = users.find((user) => {
+    return user.id === parseInt(fromId);
+  });
+  let transferTo = users.find((user) => {
+    return user.id === parseInt(toId);
+  });
+
+  if (transferFrom && transferTo && cashAmount < transferFrom.cash) {
+    transferFrom.cash -= cashAmount;
+    transferTo.cash += cashAmount;
+    saveUsers(users);
+    success = true;
+  }
+  return success;
+};
+/*****************************Transfer Credit ************************/
+const transferCredit = (fromId, toId, creditAmount) => {
+  let success = false;
+  let users = loadUsers();
+  let transferFrom = users.find((user) => {
+    return user.id === parseInt(fromId);
+  });
+  let transferTo = users.find((user) => {
+    return user.id === parseInt(toId);
+  });
+
+  if (transferFrom && transferTo && creditAmount < transferFrom.credit) {
+    transferFrom.credit -= creditAmount;
+    transferTo.credit += creditAmount;
+    saveUsers(users);
+    success = true;
+  }
+  return success;
+};
 /******************************************** */
 module.exports = {
   getUser,
@@ -113,4 +148,6 @@ module.exports = {
   updateCredit,
   withdrawCredit,
   withdrawCash,
+  transferCash,
+  transferCredit,
 };
